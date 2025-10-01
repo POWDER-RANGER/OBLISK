@@ -1,6 +1,23 @@
+<div align="center">
+
+![OBLISK Banner](https://via.placeholder.com/800x200/1a1a2e/16213e?text=OBLISK+-+Multi-Agent+AI+System)
+
 # OBLISK
 
-Multi-agent AI system with encrypted vaults, governance, and symbolic planning
+**Multi-agent AI system with encrypted vaults, governance, and symbolic planning**
+
+[![Python Version](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/POWDER-RANGER/OBLISK)
+[![Code Style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+[![GitHub Stars](https://img.shields.io/github/stars/POWDER-RANGER/OBLISK?style=social)](https://github.com/POWDER-RANGER/OBLISK/stargazers)
+
+[Features](#features) • [Installation](#installation) • [Usage](#usage) • [Documentation](docs/) • [Contributing](CONTRIBUTING.md)
+
+</div>
+
+---
 
 ## Overview
 
@@ -18,6 +35,7 @@ OBLISK is an advanced multi-agent artificial intelligence system designed to ena
 ## Features
 
 ### Core Features
+
 - **Agent Management**: Create, configure, and monitor multiple AI agents
 - **Vault System**: Secure encrypted storage with fine-grained access control
 - **Governance Engine**: Policy-based decision making and audit trails
@@ -26,6 +44,7 @@ OBLISK is an advanced multi-agent artificial intelligence system designed to ena
 - **Monitoring & Analytics**: Real-time insights into agent behavior and system performance
 
 ### Security Features
+
 - End-to-end encryption for all sensitive data
 - Zero-knowledge architecture for vault access
 - Role-based access control (RBAC)
@@ -128,6 +147,8 @@ vault.store("api_key", secret_value)
 value = vault.retrieve("api_key")
 ```
 
+For more examples, see the [examples/](examples/) directory.
+
 ## Development
 
 ### Running Tests
@@ -146,17 +167,42 @@ Contributions are welcome! Please read our [Contributing Guidelines](CONTRIBUTIN
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
+Please also review our [Code of Conduct](CODE_OF_CONDUCT.md).
+
 ## Roadmap
 
+### Phase 1: Foundation (Q4 2025)
 - [x] Initial project structure
 - [ ] Core agent framework
 - [ ] Vault encryption system
+- [ ] Basic documentation
+
+### Phase 2: Core Features (Q1 2026)
 - [ ] Governance engine
 - [ ] Symbolic planner integration
 - [ ] Multi-agent coordination
+- [ ] Comprehensive testing suite
+
+### Phase 3: Enhancement (Q2 2026)
 - [ ] Web interface
 - [ ] API documentation
 - [ ] Production deployment guide
+- [ ] Performance optimization
+
+### Phase 4: Ecosystem (Q3 2026)
+- [ ] First PyPI release (v0.1.0)
+- [ ] Integration with LangChain
+- [ ] Integration with AutoGPT
+- [ ] Integration with CrewAI
+- [ ] Plugin system for custom agents
+- [ ] Community agent marketplace
+
+### Future Milestones
+- [ ] Stable v1.0 release
+- [ ] Enterprise features
+- [ ] Cloud deployment options
+- [ ] Advanced governance models
+- [ ] Integration with major cloud AI services (AWS Bedrock, Azure OpenAI, etc.)
 
 ## License
 
@@ -170,3 +216,10 @@ Project Link: [https://github.com/POWDER-RANGER/OBLISK](https://github.com/POWDE
 
 - Inspired by modern multi-agent systems and secure computing paradigms
 - Built with best practices from the AI safety and governance community
+- Special thanks to the open-source AI community
+
+---
+
+<div align="center">
+Made with ❤️ by the OBLISK team
+</div>
