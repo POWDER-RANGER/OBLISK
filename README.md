@@ -8,7 +8,7 @@
 
 [![Python Version](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/POWDER-RANGER/OBLISK)
+[![CI Pipeline](https://github.com/POWDER-RANGER/OBLISK/actions/workflows/ci.yml/badge.svg)](https://github.com/POWDER-RANGER/OBLISK/actions/workflows/ci.yml)
 [![Code Style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 [![GitHub Stars](https://img.shields.io/github/stars/POWDER-RANGER/OBLISK?style=social)](https://github.com/POWDER-RANGER/OBLISK/stargazers)
