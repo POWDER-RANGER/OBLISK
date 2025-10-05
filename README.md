@@ -4,10 +4,7 @@
 
 > **A secure, symbolic multi-agent AI orchestration framework with encrypted vaults and governed decision-making.**
 
-[![CI Pipeline](https://github.com/POWDER-RANGER/OBLISK/actions/workflows/ci.yml/badge.svg)](https://github.com/POWDER-RANGER/OBLISK/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/POWDER-RANGER/OBLISK/blob/main/LICENSE)
-[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/POWDER-RANGER/OBLISK/badge)](https://securityscorecards.dev/viewer/?uri=github.com/POWDER-RANGER/OBLISK)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/POWDER-RANGER/OBLISK/blob/main/CONTRIBUTING.md)
+[![CI Pipeline](https://github.com/POWDER-RANGER/OBLISK/actions/workflows/ci.yml/badge.svg)](https://github.com/POWDER-RANGER/OBLISK/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/POWDER-RANGER/OBLISK/blob/main/LICENSE) [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/POWDER-RANGER/OBLISK/badge)](https://securityscorecards.dev/viewer/?uri=github.com/POWDER-RANGER/OBLISK) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/POWDER-RANGER/OBLISK/blob/main/CONTRIBUTING.md)
 
 ---
 
@@ -129,15 +126,12 @@ oblisk:
   vault:
     encryption_key_path: "/path/to/keyfile"
     storage_path: "./vault_data"
-  
   agents:
     max_concurrent: 10
     timeout_seconds: 300
-    
   planner:
     reasoning_engine: "prolog"  # or "datalog"
     max_depth: 5
-    
   governance:
     policy_path: "./policies/default.json"
     audit_log_path: "./logs/audit.log"
@@ -224,10 +218,10 @@ The Planner decomposes goals into executable plans:
 
 - **Input**: High-level goal (e.g., "Analyze sentiment from social media")
 - **Processing**:
-  1. Goal decomposition into sub-goals
-  2. Agent capability matching
-  3. Dependency resolution and ordering
-  4. Resource allocation
+  - i. Goal decomposition into sub-goals
+  - ii. Agent capability matching
+  - iii. Dependency resolution and ordering
+  - iv. Resource allocation
 - **Output**: Directed acyclic graph (DAG) of tasks assigned to agents
 - **Execution**: Tasks run in parallel where possible, with failure recovery
 
@@ -247,8 +241,6 @@ planner.execute(plan)
 ## 📚 Documentation
 
 - [Full Documentation](./docs/README.md)
-- [API Reference](./docs/api.md)
-- [Architecture Deep Dive](./docs/architecture.md)
 - [Security Best Practices](./SECURITY.md)
 - [Contributing Guide](./CONTRIBUTING.md)
 
@@ -259,9 +251,6 @@ planner.execute(plan)
 See the [`examples/`](./examples) directory for sample implementations:
 
 - `simple_agent.py`: Basic agent setup
-- `multi_agent_workflow.py`: Coordinated multi-agent task
-- `vault_integration.py`: Secure credential management
-- `symbolic_planning.py`: Advanced goal decomposition
 
 ---
 
