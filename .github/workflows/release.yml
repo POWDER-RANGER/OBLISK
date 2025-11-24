@@ -1,0 +1,91 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Get version from tag
+        id: get_version
+        run: |
+          echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+          echo "TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+      
+      - name: Generate release notes
+        id: release_notes
+        run: |
+          # Get the previous tag
+          PREV_TAG=$(git tag --sort=-version:refname | grep -v "${GITHUB_REF#refs/tags/}" | head -n 1)
+          
+          if [ -z "$PREV_TAG" ]; then
+            # If no previous tag, get all commits
+            COMMITS=$(git log --pretty=format:"- %s (%h)" --no-merges)
+          else
+            # Get commits since previous tag
+            COMMITS=$(git log ${PREV_TAG}..${GITHUB_REF#refs/tags/} --pretty=format:"- %s (%h)" --no-merges)
+          fi
+          
+          # Create release notes
+          cat << EOF > release_notes.md
+          ## What's Changed
+          
+          ${COMMITS}
+          
+          **Full Changelog**: https://github.com/${{ github.repository }}/compare/${PREV_TAG}...${GITHUB_REF#refs/tags/}
+          
+          ## Installation
+          
+          \`\`\`bash
+          pip install git+https://github.com/${{ github.repository }}.git@${GITHUB_REF#refs/tags/}
+          \`\`\`
+          
+          ## Documentation
+          
+          - [README](https://github.com/${{ github.repository }}/blob/${GITHUB_REF#refs/tags/}/README.md)
+          - [Contributing](https://github.com/${{ github.repository }}/blob/${GITHUB_REF#refs/tags/}/CONTRIBUTING.md)
+          - [Security Policy](https://github.com/${{ github.repository }}/blob/${GITHUB_REF#refs/tags/}/SECURITY.md)
+          EOF
+      
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          body_path: release_notes.md
+          draft: false
+          prerelease: ${{ contains(github.ref, 'alpha') || contains(github.ref, 'beta') || contains(github.ref, 'rc') }}
+          generate_release_notes: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Create source archive
+        run: |
+          mkdir -p dist
+          git archive --format=tar.gz --prefix=oblisk-${{ steps.get_version.outputs.VERSION }}/ HEAD > dist/oblisk-${{ steps.get_version.outputs.VERSION }}.tar.gz
+          git archive --format=zip --prefix=oblisk-${{ steps.get_version.outputs.VERSION }}/ HEAD > dist/oblisk-${{ steps.get_version.outputs.VERSION }}.zip
+      
+      - name: Upload Release Assets
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            dist/*.tar.gz
+            dist/*.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
