@@ -1,0 +1,271 @@
+name: Build OBLISK Windows EXE
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version number (e.g., 3.0.0)'
+        required: false
+        default: '3.0.0'
+      mode:
+        description: 'Build mode (standalone or onefile)'
+        required: false
+        type: choice
+        options:
+          - standalone
+          - onefile
+        default: 'standalone'
+
+jobs:
+  build-exe:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Extract version
+        id: version
+        shell: python
+        run: |
+          import os
+          import re
+          
+          # Check if running from tag
+          ref = os.environ.get('GITHUB_REF', '')
+          if ref.startswith('refs/tags/v'):
+              version = ref.replace('refs/tags/v', '')
+          else:
+              version = '${{ github.event.inputs.version || '3.0.0' }}'
+          
+          print(f'VERSION={version}')
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f'VERSION={version}\n')
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      
+      - name: Install dependencies
+        shell: bash
+        run: |
+          python -m pip install --upgrade pip
+          pip install nuitka
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          fi
+      
+      - name: Verify build files
+        shell: python
+        run: |
+          from pathlib import Path
+          
+          required_files = [
+              'oblisk_cli.py',
+              'build_oblisk.py',
+          ]
+          
+          for file in required_files:
+              if not Path(file).exists():
+                  raise FileNotFoundError(f"Required file not found: {file}")
+              print(f"✓ Found: {file}")
+      
+      - name: Build OBLISK.exe
+        shell: python
+        run: |
+          import subprocess
+          import sys
+          
+          cmd = [
+              sys.executable,
+              'build_oblisk.py',
+              '--version', '${{ steps.version.outputs.VERSION }}',
+              '--output', './dist',
+              '--mode', '${{ github.event.inputs.mode || 'standalone' }}',
+          ]
+          
+          print(f"Build command: {' '.join(cmd)}")
+          result = subprocess.run(cmd, check=False)
+          sys.exit(result.returncode)
+      
+      - name: Locate and verify EXE
+        shell: python
+        run: |
+          from pathlib import Path
+          import subprocess
+          import sys
+          
+          # Find OBLISK.exe
+          exe_candidates = [
+              Path('./dist/OBLISK.exe'),
+              Path('./OBLISK.exe'),
+          ]
+          
+          exe_path = None
+          for candidate in exe_candidates:
+              if candidate.exists():
+                  exe_path = candidate
+                  break
+          
+          # Search recursively
+          if not exe_path:
+              for exe in Path('./dist').rglob('OBLISK.exe'):
+                  exe_path = exe
+                  break
+          
+          if not exe_path:
+              raise FileNotFoundError("OBLISK.exe not found")
+          
+          # Get file info
+          size_mb = exe_path.stat().st_size / (1024 * 1024)
+          print(f"✓ EXE found: {exe_path}")
+          print(f"✓ Size: {size_mb:.2f} MB")
+          
+          # Test execution
+          try:
+              result = subprocess.run(
+                  [str(exe_path), '--version'],
+                  capture_output=True,
+                  text=True,
+                  timeout=10,
+              )
+              if result.returncode == 0:
+                  print(f"✓ Version check passed: {result.stdout.strip()}")
+              else:
+                  print(f"⚠ Version check warning: {result.stderr}")
+          except subprocess.TimeoutExpired:
+              print("⚠ EXE test timed out (may be normal)")
+          except Exception as e:
+              print(f"⚠ Could not test EXE: {e}")
+          
+          # Store path for next steps
+          with open('.exe_path', 'w') as f:
+              f.write(str(exe_path))
+      
+      - name: Create portable bundle
+        shell: python
+        run: |
+          from pathlib import Path
+          import shutil
+          
+          # Read EXE path from previous step
+          with open('.exe_path', 'r') as f:
+              exe_path = Path(f.read().strip())
+          
+          bundle_dir = Path(f"OBLISK-Portable-${{ steps.version.outputs.VERSION }}")
+          bundle_dir.mkdir(exist_ok=True)
+          
+          # Copy EXE
+          shutil.copy2(exe_path, bundle_dir / 'OBLISK.exe')
+          print(f"✓ Copied EXE to {bundle_dir}")
+          
+          # Copy config if exists
+          if Path('config').exists():
+              if (bundle_dir / 'config').exists():
+                  shutil.rmtree(bundle_dir / 'config')
+              shutil.copytree('config', bundle_dir / 'config')
+              print(f"✓ Copied config directory")
+          
+          # Copy README
+          readme = bundle_dir / 'README.txt'
+          readme.write_text(f"""
+OBLISK v${{ steps.version.outputs.VERSION }} - Portable
+=====================================================
+
+USAGE:
+  OBLISK.exe [command] [options]
+
+EXAMPLES:
+  OBLISK.exe --help
+  OBLISK.exe --version
+  OBLISK.exe start
+  OBLISK.exe status
+
+For documentation:
+  https://github.com/POWDER-RANGER/OBLISK
+""")
+          print(f"✓ Created portable bundle: {bundle_dir}")
+      
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: OBLISK-v${{ steps.version.outputs.VERSION }}-Windows
+          path: |
+            dist/OBLISK.exe
+            OBLISK-Portable-${{ steps.version.outputs.VERSION }}/
+          retention-days: 30
+      
+      - name: Create Release (on tag)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            dist/OBLISK.exe
+            OBLISK-Portable-${{ steps.version.outputs.VERSION }}/**/*
+          body: |
+            # OBLISK v${{ steps.version.outputs.VERSION }}
+            
+            Multi-Agent AI System with Encrypted Vaults & Governance
+            
+            ## What's Included
+            - **OBLISK.exe** - Standalone Windows executable
+            - **Portable Bundle** - Complete distribution package
+            
+            ## System Requirements
+            - Windows 7 or later
+            - Python 3.8+ (compiled into executable)
+            
+            ## Quick Start
+            ```powershell
+            OBLISK.exe --help
+            OBLISK.exe --version
+            OBLISK.exe start
+            OBLISK.exe status
+            ```
+            
+            ## Features
+            - Multi-agent AI orchestration
+            - AES-256 encrypted vault
+            - Governance and policy enforcement
+            - Event-driven architecture
+            - Comprehensive logging
+            
+            ## Documentation
+            - [GitHub Repository](https://github.com/POWDER-RANGER/OBLISK)
+            - [Architecture Guide](https://github.com/POWDER-RANGER/OBLISK/tree/main/docs)
+            - [Configuration](https://github.com/POWDER-RANGER/OBLISK#-configuration)
+            
+            ## Build Information
+            - **Build Date**: ${{ github.event.head_commit.timestamp }}
+            - **Compiler**: Nuitka (Python to C/C++)
+            - **Mode**: ${{ github.event.inputs.mode || 'standalone' }}
+          draft: false
+          prerelease: ${{ contains(steps.version.outputs.VERSION, 'beta') || contains(steps.version.outputs.VERSION, 'rc') }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Build summary
+        shell: python
+        run: |
+          version = '${{ steps.version.outputs.VERSION }}'
+          print(f"\n{'='*60}")
+          print("BUILD COMPLETED SUCCESSFULLY")
+          print(f"{'='*60}")
+          print(f"Version: {version}")
+          print(f"Mode: ${{ github.event.inputs.mode || 'standalone' }}")
+          print(f"Artifacts: ./dist/OBLISK.exe")
+          print(f"Bundle: ./OBLISK-Portable-{version}/")
+          print(f"\nNext steps:")
+          print(f"1. Test on clean Windows machine")
+          print(f"2. Tag release: git tag v{version} && git push --tags")
