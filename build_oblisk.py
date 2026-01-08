@@ -68,12 +68,30 @@ class NuitkaBuildScript:
         
         # Check Nuitka
         try:
-            import nuitka
-            print_success(f"Nuitka {nuitka.__version__} found")
-        except ImportError:
-            print_error("Nuitka not installed. Installing...")
-            subprocess.run([sys.executable, "-m", "pip", "install", "nuitka"], check=True)
-            print_success("Nuitka installed")
+            result = subprocess.run(
+                [sys.executable, "-m", "nuitka", "--version"],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            if result.returncode == 0:
+                nuitka_version = result.stdout.strip()
+                print_success(f"Nuitka {nuitka_version} found")
+            else:
+                print_error("Nuitka check failed")
+                return False
+        except Exception as e:
+            print_error(f"Failed to check Nuitka: {e}")
+            print_info("Installing Nuitka...")
+            try:
+                subprocess.run(
+                    [sys.executable, "-m", "pip", "install", "nuitka"],
+                    check=True,
+                )
+                print_success("Nuitka installed")
+            except Exception as install_error:
+                print_error(f"Failed to install Nuitka: {install_error}")
+                return False
         
         # Check for main file
         if not (self.project_root / "oblisk_cli.py").exists():
