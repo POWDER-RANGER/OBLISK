@@ -1,0 +1,32 @@
+# OBLISK Requirements
+# Multi-agent AI orchestration framework dependencies
+
+# Core dependencies
+python-dotenv>=1.0.0
+pyyaml>=6.0
+
+# Cryptography for secure vault
+cryptography>=41.0.0
+
+# Data validation and settings
+pydantic>=2.0.0
+
+# Logging and monitoring
+rich>=13.0.0
+coloredlogs>=15.0
+
+# Async support
+aiofiles>=23.0.0
+
+# Configuration management
+typer>=0.9.0
+click>=8.1.0
+
+# Development dependencies (optional, install with: pip install -e .[dev])
+# pytest>=7.4.0
+# pytest-cov>=4.1.0
+# pytest-asyncio>=0.21.0
+# black>=23.0.0
+# ruff>=0.1.0
+# mypy>=1.5.0
+# pre-commit>=3.4.0
