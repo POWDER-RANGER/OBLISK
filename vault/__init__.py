@@ -1,8 +1,11 @@
-"""OBLISK Vault Module.
+"""OBLISK Vault package.
 
-Provides secure encrypted storage for sensitive data.
+Exports::
+
+    from vault import Vault, derive_key, InvalidTag
 """
 
-from oblisk.vault.vault import Vault
+from vault.crypto import InvalidTag, derive_key
+from vault.vault import Vault
 
-__all__ = ["Vault"]
+__all__ = ["Vault", "derive_key", "InvalidTag"]
