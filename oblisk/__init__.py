@@ -13,6 +13,8 @@ The OBLISK is shaped like its namesake:
 Governance principle: No agent acts without vault-signed intent.
                 No data leaves without consent-log approval.
                 Every decision is explainable via proof tree.
+
+Version: 2.0.0-alpha (Human Sovereign Architecture)
 """
 
 __version__ = "2.0.0-alpha"
@@ -21,5 +23,4 @@ __all__ = [
     "conduit", 
     "shield",
     "ceremony",
-    "agents",
 ]
