@@ -84,7 +84,7 @@ graph TB
 git clone https://github.com/POWDER-RANGER/OBLISK.git
 cd OBLISK
 python3 -m venv venv
-source venv/bin/activate  # Windows: .\\venv\\Scripts\\Activate.ps1
+source venv/bin/activate  # Windows: .\venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 python -m oblisk.main
 ```
@@ -161,11 +161,13 @@ planner.execute(plan)  # Returns DAG of tasks assigned to agents
 
 ---
 
-## 📈 GitHub Stats
+## 📈 Activity
 
 <div align="center">
 
-![OBLISK Stats](https://github-readme-stats.vercel.app/api?username=POWDER-RANGER&repo=OBLISK&show_icons=true&theme=midnight-purple&hide_border=true)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/POWDER-RANGER/OBLISK?style=for-the-badge&labelColor=0D1117&color=7C4DFF)
+![GitHub last commit](https://img.shields.io/github/last-commit/POWDER-RANGER/OBLISK?style=for-the-badge&labelColor=0D1117&color=7C4DFF)
+![GitHub repo size](https://img.shields.io/github/repo-size/POWDER-RANGER/OBLISK?style=for-the-badge&labelColor=0D1117&color=7C4DFF)
 
 </div>
 
@@ -205,7 +207,7 @@ planner.execute(plan)  # Returns DAG of tasks assigned to agents
 
 ## 🤝 Connect
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Curtis_Farrar-0077B5?style=flat&logo=linkedin)](https://www.linkedin.com/in/curtis-farrar-g6b)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Curtis_Farrar-0077B5?style=flat&logo=linkedin)](https://www.linkedin.com/in/curtis-farrar-20aa3525b)
 [![GitHub](https://img.shields.io/badge/GitHub-POWDER--RANGER-181717?style=flat&logo=github)](https://github.com/POWDER-RANGER)
 [![Portfolio](https://img.shields.io/badge/Portfolio-powder--ranger.github.io-B388FF?style=flat&logo=githubpages)](https://powder-ranger.github.io)
 [![ORCID](https://img.shields.io/badge/ORCID-0009--0008--9273--2458-A6CE39?style=flat&logo=orcid)](https://orcid.org/0009-0008-9273-2458)
