@@ -155,6 +155,31 @@ class TestPersistence:
             v2.retrieve("secret")
 
 
+class TestEncryptedBackup:
+    def test_export_import_preserves_encrypted_values_and_metadata(self, tmp_path: Path) -> None:
+        source = Vault(key=TEST_KEY, name="backup-vault", vault_id="vault-backup-id")
+        source.store("secret", "backup-plaintext")
+        backup = tmp_path / "nested" / "vault.json"
+
+        source.export_encrypted(backup)
+
+        assert "backup-plaintext" not in backup.read_text(encoding="utf-8")
+        restored = Vault.import_encrypted(backup, TEST_KEY)
+        assert restored.name == "backup-vault"
+        assert restored.vault_id == "vault-backup-id"
+        assert restored.retrieve("secret") == "backup-plaintext"
+
+    def test_import_with_wrong_key_fails_authentication(self, tmp_path: Path) -> None:
+        backup = tmp_path / "vault.json"
+        source = Vault(key=TEST_KEY)
+        source.store("secret", "value")
+        source.export_encrypted(backup)
+
+        restored = Vault.import_encrypted(backup, ALT_KEY)
+        with pytest.raises(InvalidTag):
+            restored.retrieve("secret")
+
+
 class TestRotateKey:
     def test_rotate_preserves_values(self, vault: Vault) -> None:
         vault.store("a", "alpha")
