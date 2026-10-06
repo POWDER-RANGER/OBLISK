@@ -184,6 +184,23 @@ class Vault:
         """
         return sorted(self._store.keys())
 
+    def export_encrypted(self, path: str | Path) -> None:
+        """Write an encrypted backup without decrypting stored values."""
+        target = Path(path)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        payload = {
+            "vault_id": self.vault_id,
+            "name": self.name,
+            "version": 1,
+            "store": self._store,
+        }
+        target.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+
+    @classmethod
+    def import_encrypted(cls, path: str | Path, key: bytes) -> "Vault":
+        """Open an encrypted backup with the original 256-bit key."""
+        return cls(key=key, path=path)
+
     def rotate_key(self, new_key: bytes) -> None:
         """Re-encrypt all secrets under *new_key*.
 
@@ -269,9 +286,21 @@ class Vault:
             raise ValueError(
                 f"Vault file '{self._path}' is corrupted or unreadable: {exc}"
             ) from exc
-        if not isinstance(payload, dict) or "store" not in payload:
+        store = payload.get("store") if isinstance(payload, dict) else None
+        if (
+            not isinstance(payload, dict)
+            or not isinstance(store, dict)
+            or not all(
+                isinstance(name, str) and isinstance(value, str)
+                for name, value in store.items()
+            )
+        ):
             raise ValueError(f"Vault file '{self._path}' has invalid format.")
-        self._store = payload["store"]
+        self._store = store
+        if isinstance(payload.get("vault_id"), str):
+            self.vault_id = payload["vault_id"]
+        if isinstance(payload.get("name"), str):
+            self.name = payload["name"]
 
     @staticmethod
     def _generate_vault_id() -> str:
