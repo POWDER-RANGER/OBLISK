@@ -22,7 +22,7 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
 ]
 dependencies = [
-    "cryptography>=41.0.0"
+    "cryptography>=42.0.0"
 ]
 
 [project.optional-dependencies]

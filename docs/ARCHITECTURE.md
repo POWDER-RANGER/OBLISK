@@ -21,6 +21,7 @@
 | **Vault** | Key rotation (`rotate_key()`) | ✅ Implemented | Re-encrypts all secrets under new key |
 | **Vault** | Persistent JSON storage | ✅ Implemented | Encrypted blobs; JSON file backend |
 | **Vault** | GCM tamper detection | ✅ Implemented | `InvalidTag` raised on any corruption |
+| **Vault** | Encrypted backup import/export | ✅ Implemented | Preserves authenticated ciphertext and vault metadata |
 | **Agents** | Agent lifecycle (start/stop/pause/resume) | ✅ Implemented | Fully tested |
 | **Agents** | `execute_task()` returning result dict | ✅ Implemented | Fully tested |
 | **Agents** | Task queue (assign/wait API) | 🔲 Planned | Issue #7 |
